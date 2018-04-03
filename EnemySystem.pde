@@ -127,8 +127,8 @@ class EnemySystem {
         else if (pattern == 25) {
             eSys.addEnemyRow(4, 100, 0, -100, -100, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main); //M-shape
             eSys.addEnemyRow(1, 200, 0, -300, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
-            eSys.addEnemyRow(1, 300, 0, -100, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
-            eSys.addEnemyRow(1, 400, 0, -100, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
+            eSys.addEnemyRow(1, 300, 0, -200, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
+            eSys.addEnemyRow(1, 400, 0, -300, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
             eSys.addEnemyRow(4, 500, 0, -100, -100, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
         }
     }
