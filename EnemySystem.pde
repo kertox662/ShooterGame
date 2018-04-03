@@ -1,25 +1,28 @@
+//Misha Melnyk
+//The system to organize enemy objects
 class EnemySystem {
-    ArrayList<Enemy> eSysArray;
+    ArrayList<Enemy> eSysArray; //Storage for enemy objects
     int[] patternQueue = new int[6];
-    float difficulty = 1;
+    float difficulty = 1; //Difficuly, raises the speed of enemies
 
     EnemySystem() {
         eSysArray = new ArrayList<Enemy>();
     }
 
-
+    //Adds an enemy to the system array to allow for massive updates in one frame
     void addEnemy(float x, float y, float hspeed, float vspeed, String file, int xdirection, int life, int scoreVal, PApplet main) {
         eSysArray.add(new Enemy(x, y, hspeed, vspeed, file, xdirection, life, scoreVal, main));
     }
 
-    void run() {
+    void run() { //Runs the enemy methods for each enemy
         for (int i = eSysArray.size()-1; i >= 0; i--) {
             Enemy e = eSysArray.get(i);
             if (e.life <= 0) {
                 p.score += e.scoreVal;
-                if(!mute){
+                if (!mute) {
                     e.enemyHit.amp(0.4);
-                    e.enemyHit.play();}
+                    e.enemyHit.play();
+                }
                 eSysArray.remove(i);
             }
 
@@ -32,19 +35,19 @@ class EnemySystem {
             e.inPadding();
         }
     }
-
+    //Adds a row of enemies to the system array
     void addEnemyRow(int amount, int firstX, int xgap, int firstY, int ygap, float hspeed, float vspeed, String file, int xdirection, int life, int scoreVal, PApplet main) {
         for (int i = 0; i < amount; i++) {
             addEnemy(firstX + i*xgap, firstY + i*ygap, hspeed, vspeed, file, xdirection, life, scoreVal, main);
         }
     }
-
+    //Creates a Queue from which to get the pattern numbers
     void genQueue() {
         for (int i = 0; i < patternQueue.length; i++) {
             patternQueue[i] = int(random(25));
         }
     }
-
+    //The patterns that can be gotten from the Queue
     void doEnemyRow(int pattern, PApplet main) {
 
         if (pattern == 0) {
@@ -122,7 +125,7 @@ class EnemySystem {
 
         //Special Patterns
         else if (pattern == 25) {
-            eSys.addEnemyRow(4, 100, 0, -100, -100, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
+            eSys.addEnemyRow(4, 100, 0, -100, -100, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main); //M-shape
             eSys.addEnemyRow(1, 200, 0, -300, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
             eSys.addEnemyRow(1, 300, 0, -100, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
             eSys.addEnemyRow(1, 400, 0, -100, 0, 0, 3*difficulty, "Images/Alien2.png", 1, 2, 50, main);
@@ -130,3 +133,4 @@ class EnemySystem {
         }
     }
 }
+//Misha Melnyk

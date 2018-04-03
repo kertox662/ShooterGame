@@ -1,3 +1,5 @@
+//Misha Melnyk
+//The system to organize laser objects
 class LaserSystem {
     ArrayList<Laser> lasersystem; //Main storage variable for lasers
 
@@ -26,4 +28,4 @@ class LaserSystem {
             l.display();
         }
     }
-}
+}//Misha Melnyk

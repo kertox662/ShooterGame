@@ -1,14 +1,17 @@
+//Misha Melnyk
+//The class for enemy objects
 class Enemy {
     float x; //Coordinates
     float y;
     float xspeed; //Speeds in directions
     float yspeed;
 
-    int xdirection; //Initial directions
+    int xdirection; //Initial directions (not really needed anymore, basically always put 1)
     int ydirection = 1;
 
-    int xPadding = 20; //Padding so enemy doesn't completely escape screen
-    int yPadding = 20; //To be put in constructor to allow negative values for offscreen enemies
+    int xPadding = 20; //Padding so enemy doesn't completely escape screen once it enters
+    int yPadding = 20; 
+    boolean inPadding = false; //Used so that padding doesn't reflect the enemy back out the first time it comes from offscreen
 
     int life; //Life and color based on life
     int initlife;
@@ -18,14 +21,13 @@ class Enemy {
 
     PImage sprite;
 
-    boolean inPadding = false;
     float lastxDirChange = frameRate * -1;
     float lastyDirChange = frameRate * -1;
 
-    int scoreVal;
+    int scoreVal;//How much score the enemy will give
 
-    PApplet main;
-    SoundFile enemyHit;
+    PApplet main; //Used to initiate sound files
+    SoundFile enemyHit; //Sound file
 
     Enemy(float x, float y, float hspeed, float vspeed, String spriteFile, int xdirection, int life, int score, PApplet main) { //Constructor
         this.x = x;
@@ -55,7 +57,7 @@ class Enemy {
         } 
         return false;
     }
-    void move() {//Temporary movement to test collision with lasers
+    void move() {//Movement and check for edge collision
 
         x += xspeed*xdirection;
         y += yspeed*ydirection;
@@ -114,16 +116,17 @@ class Enemy {
     }
 
 
-    boolean isOffScreen() {
+    boolean isOffScreen() { //Checks if the enemy is offscreen
         if (x < -700 || x > width + 700 || y < -700 || y > height+700) {
             return true;
         }
         return false;
     }
 
-    void inPadding() {
+    void inPadding() {//If the enemy goes inside the padded area, it will stay there until it dies.
         if (!isOnxPadding() && !isOnyPadding()) {
             inPadding = true;
         }
     }
 }
+//Misha Melnyk

@@ -1,3 +1,5 @@
+//Misha Melnyk
+//Basic Class that moves, displays, and can check if it's offscreen
 class Laser {
 
     float x;
