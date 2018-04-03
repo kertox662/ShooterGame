@@ -18,6 +18,8 @@ int hiScoreEasy;
 int hiScoreNormal;
 int hiScoreHard;
 
+int musicStartFrame;
+
             
 
 
@@ -31,6 +33,7 @@ void setup() {
     eSys = new EnemySystem();
     
     music = new SoundFile(this, "Sounds/KomikuTheMomentofTruth.mp3");
+    
     
     t = new Title(this);
     GO = new GameOver("GAME OVER", 180, this);
@@ -49,6 +52,7 @@ void setup() {
 
 void draw() {
     back.run();
+    println();
     eSys.genQueue();
     if (gameScene == "Title") {
         t.displayTitle();

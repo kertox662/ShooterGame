@@ -73,7 +73,8 @@ class Title {
         if (o == "Start Game") {
             gameScene = "Main";
             if (!mute) {
-                music.loop();
+                music.play();
+                musicStartFrame = frameCount;
             }
         } else if (o == "Change Ship") {
             p.changeSprite();
