@@ -1,5 +1,5 @@
 class Player {
-    
+
     float x; //Coordinates
     float y;
 
@@ -17,24 +17,38 @@ class Player {
 
     SoundFile laserSound; //Sprite and Sound variables
     PImage sprite;
+    String[] spriteList = {"Images/ship.png", "Images/ship2.png", "Images/ship3.png"};
+    int currSprite;
+
+    SoundFile lifeGainSound;
+    SoundFile shipHit;
 
     int lastFrameShot = 0; //Delay for shooting
 
-    int xpadding = 30; //Padding so player doesn't leave screen
-    int ypadding = 27;
-    
-    int life = 5;
-    PImage heart = loadImage("PixelHeart.png");
-    
-    int score;
+    float xpadding; //Padding so player doesn't leave screen
+    float ypadding;
 
-    Player(float x, float y, String spritefile, String soundfile, PApplet main) { //Constructor with default speeds of 3
+    int life = 5;
+    PImage heart = loadImage("Images/PixelHeart.png");
+
+    int score;
+    int lastFrameHit = -60;
+
+    int nextLifeGain = 250;
+
+
+    Player(float x, float y, int currSprite, String soundfile, PApplet main) { //Constructor with default speeds of 3
         this.x = x;
         this.y = y;
         xspeed = 1;
         yspeed = 1;
-        sprite = loadImage(spritefile);
+        this.currSprite = currSprite;
+        sprite = loadImage(spriteList[currSprite]);
         laserSound = new SoundFile(main, soundfile);
+        lifeGainSound = new SoundFile(main, "Sounds/LifeGain.flac");
+        shipHit = new SoundFile(main, "Sounds/shipHit.aiff");
+        xpadding = sprite.width/2;
+        ypadding = sprite.height/2;
     }
 
     Player(float x, float y, int hspeed, int vspeed, String file, String soundfile, PApplet main) { //Constructor with given speeds
@@ -44,6 +58,8 @@ class Player {
         yspeed = vspeed;
         sprite = loadImage(file);
         laserSound = new SoundFile(main, soundfile);
+        xpadding = sprite.width/2;
+        ypadding = sprite.height/2;
     }
 
     void changeVelocity() { //Changes Velocity based on which directions are toggles to be moved in
@@ -87,7 +103,7 @@ class Player {
             }
         }
     }
-    
+
     void move() { // Changes x and y based on velocity
         changeVelocity();
         checkPadding();
@@ -101,14 +117,31 @@ class Player {
 
     void display() { //Draws the player sprite
         imageMode(CENTER);
+        if (isFlashing()) {
+            tint(255, 40);
+        } else {
+            tint(255);
+        }
         image(sprite, x, y);
     }
-    
-    void displayLife(){
-        for(int i = 0; i<life; i++){
+
+    void displayLife() {
+        addLife();
+        for (int i = 0; i<life; i++) {
             imageMode(CENTER);
             tint(255);
             image(heart, 18 + i*34, 20);
+        }
+    }
+
+    void addLife() {
+        if (score >= nextLifeGain) {
+            life++;
+            nextLifeGain *= 1.75;
+            lifeGainSound.rate(2);
+            if (!mute) {
+                lifeGainSound.play();
+            }
         }
     }
 
@@ -136,8 +169,81 @@ class Player {
                 lastFrameShot = frameCount;
                 laserSound.amp(0.25);
                 laserSound.rate(1.5);
-                laserSound.play();
+                if (!mute) {
+                    laserSound.play();
+                }
             }
         }
+    }
+
+    void changeSprite() {
+        currSprite ++;
+        sprite = loadImage(spriteList[currSprite%spriteList.length]);
+    }
+
+    boolean isColliding(Enemy other) { //Checks if colliding with laser object
+
+        float distX = 0;
+        float distY = 0;
+
+        if (other.x <= x) {
+            distX = abs((x - sprite.width/2) - (other.x + other.sprite.width/2));
+        } else if (other.x >= x) {
+            distX = abs((x + sprite.width/2) - (other.x - other.sprite.width/2));
+        }
+
+        if (other.y <= y) {
+            distY = abs((y + sprite.height/2) - (other.y + other.sprite.height/2));
+        } else if (other.y >= y) {
+            distY = abs((y - sprite.height/2) - (other.y - other.sprite.height/2));
+        }
+
+        if (distX < 10) {
+            if (distY < sprite.height/2 + other.sprite.height/2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void checkCollisions(EnemySystem es) {
+        for (int i = es.eSysArray.size()-1; i >= 0; i--) {
+            Enemy e = es.eSysArray.get(i);
+            if (frameCount- lastFrameHit >= frameRate *1.5) {
+                if (isColliding(e)) {
+                    life --;
+                    if (!mute) {
+                        shipHit.rate(1.4);
+                        shipHit.play();
+                    }
+                    lastFrameHit = frameCount;
+                }
+            }
+        }
+        if (life <= 0) {
+            GO.gameOverSound.rate(1.2);
+            GO.gameOverSound.play();
+            GO.start = frameCount;
+            GO.score = score;
+            gameScene = "GameOver";
+            music.stop();
+        }
+    }
+
+    boolean isFlashing() {
+        if (frameCount- lastFrameHit <= frameRate) {
+            if ((frameCount - lastFrameHit)%20 < 10) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void run() {
+        move();
+        shoot();
+        display();
+        checkCollisions(eSys);
+        displayLife();
     }
 }

@@ -1,11 +1,8 @@
 class Enemy {
     float x; //Coordinates
     float y;
-    int xspeed; //Speeds in directions
-    int yspeed;
-
-    int xWidth; //Dimensions
-    int yHeight;
+    float xspeed; //Speeds in directions
+    float yspeed;
 
     int xdirection; //Initial directions
     int ydirection = 1;
@@ -13,20 +10,35 @@ class Enemy {
     int xPadding = 20; //Padding so enemy doesn't completely escape screen
     int yPadding = 20; //To be put in constructor to allow negative values for offscreen enemies
 
-    int life = 255; //Life and color based on life
-    color c = color(0 , 255, 0);
+    int life; //Life and color based on life
+    int initlife;
+    color c = color(0, 255, 0);
 
     int hitFrames = 0; //Frames to run hit animation
-    
+
     PImage sprite;
 
-    Enemy(float x, float y, int hspeed, int vspeed, String spriteFile, int xdirection) { //Constructor
+    boolean inPadding = false;
+    float lastxDirChange = frameRate * -1;
+    float lastyDirChange = frameRate * -1;
+
+    int scoreVal;
+
+    PApplet main;
+    SoundFile enemyHit;
+
+    Enemy(float x, float y, float hspeed, float vspeed, String spriteFile, int xdirection, int life, int score, PApplet main) { //Constructor
         this.x = x;
         this.y = y;
         xspeed = hspeed;
         yspeed = vspeed;
         sprite = loadImage(spriteFile);
         this.xdirection = xdirection;
+        this.life = life;
+        initlife = life;
+        scoreVal = score;
+        this.main = main;
+        enemyHit = new SoundFile(main, "Sounds/EnemyKill.wav");
     }
 
 
@@ -37,24 +49,48 @@ class Enemy {
         return false;
     }
 
+    boolean isOnyPadding() { //Checks if enemy is on y padding
+        if (y < yPadding || y > height - yPadding) {
+            return true;
+        } 
+        return false;
+    }
     void move() {//Temporary movement to test collision with lasers
-        if (isOnxPadding()) {
-            xdirection *= -1;
-        }
+
         x += xspeed*xdirection;
         y += yspeed*ydirection;
+
+        if (isOnxPadding()) {
+            if (frameCount - lastxDirChange > 10 && inPadding) {
+                xdirection *= -1;
+                lastxDirChange = frameCount;
+            }
+            if (yspeed == 0 && inPadding) {
+                y += sprite.height * ydirection;
+            }
+        }
+        if (isOnyPadding()) {
+            if (frameCount - lastyDirChange > 10 && inPadding) {
+                ydirection *= -1;
+                lastyDirChange = frameCount;
+            } 
+            if (xspeed == 0 && inPadding) {
+                x += sprite.width * xdirection;
+            }
+        }
     }
 
     void display() { //Draws the enemy
         imageMode(CENTER);
-        tint(c);
-        image(sprite, x, y);
+
         if (hitFrames > 0) {
-            c = color(150,50, 50);
+            c = color(150, 50, 50);
             hitFrames --;
         } else {
-            c = color(life);
+            c = color(255 * life / initlife);
         }
+        tint(c);
+        image(sprite, x, y);
     }
 
     boolean isColliding(Laser other) { //Checks if colliding with laser object
@@ -70,11 +106,24 @@ class Enemy {
         for (int i = ls.lasersystem.size()-1; i >= 0; i--) {
             Laser l = ls.lasersystem.get(i);
             if (isColliding(l)) {
-                life -= 15;
+                life --;
                 hitFrames = 10;
                 ls.lasersystem.remove(i);
-                p.score += 100;
             }
+        }
+    }
+
+
+    boolean isOffScreen() {
+        if (x < -700 || x > width + 700 || y < -700 || y > height+700) {
+            return true;
+        }
+        return false;
+    }
+
+    void inPadding() {
+        if (!isOnxPadding() && !isOnyPadding()) {
+            inPadding = true;
         }
     }
 }

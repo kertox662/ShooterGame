@@ -5,29 +5,63 @@ LaserSystem laserSys;
 EnemySystem eSys;
 SoundFile music;
 Title t;
+GameOver GO;
+
+BG back;
+
+PFont font;
 
 String gameScene = "Title";
+boolean mute = false;
+
+int hiScoreEasy;
+int hiScoreNormal;
+int hiScoreHard;
+
+            
+
 
 void setup() {
     size(800, 800, P2D);
     frameRate(60);
-    p = new Player(width/2, height - 100, "ship.png", "zap.mp3", this);
+    
+    p = new Player(width/2, height - 100, 0, "Sounds/zap.mp3", this);
+    
     laserSys = new LaserSystem();
     eSys = new EnemySystem();
-    eSys.addEnemy(width/2, 100, 5, 0, "Alien2.png", 1);
-    eSys.addEnemy(200, 100, 5, 0, "Alien4.png", 1);
-    music = new SoundFile(this, "KomikuTheMomentofTruth.mp3");
-    music.loop();
-    t = new Title();
+    
+    music = new SoundFile(this, "Sounds/KomikuTheMomentofTruth.mp3");
+    
+    t = new Title(this);
+    GO = new GameOver("GAME OVER", 180, this);
+    
+    font = createFont("8-BIT-WONDER.ttf", 36);
+    textFont(font);
+    back = new BG();
+    
+    String [] hiScores = loadStrings("hiScores.txt");
+    hiScoreEasy = int(hiScores[0]);
+    hiScoreNormal = int(hiScores[1]);
+    hiScoreHard = int(hiScores[2]);
+    
+    
 }
 
 void draw() {
-
+    back.run();
+    eSys.genQueue();
     if (gameScene == "Title") {
         t.displayTitle();
         t.displayText();
+        p.display();
     } else if (gameScene == "Main") {
+        while (eSys.eSysArray.size() < 15) {
+            eSys.doEnemyRow(int(random(25)), this);
+        }
+
         runGame();
+    } else if (gameScene == "GameOver") {
+        GO.run();
     }
 }
 
@@ -54,10 +88,14 @@ void keyPressed() {
             t.changeOption("add", 0, 1);
         }
     } else if (keyCode == 32) {
-        p.setShoot(true);
+        if (gameScene == "Main") {
+            p.setShoot(true);
+        } else if (gameScene == "Title") {
+            t.confirmClicked();
+        }
     }
 
-    println("Pressed: "+key);
+    //println("Pressed: "+key);
 }
 
 void keyReleased() {
@@ -73,7 +111,7 @@ void keyReleased() {
         p.setShoot(false);
     }
 
-    println("Released: "+key);
+    //println("Released: "+key);
 }
 
 void displayScore() {
@@ -85,12 +123,8 @@ void displayScore() {
 }
 
 void runGame() {
-    background(155);
     laserSys.run();
-    p.display();
-    p.move();
-    p.shoot();
     eSys.run();
-    p.displayLife();
+    p.run();
     displayScore();
 }
