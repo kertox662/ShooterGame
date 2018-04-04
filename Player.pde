@@ -13,7 +13,7 @@ class Player {
 
     int xspeed; //Movement
     int yspeed;
-    float fric = 0.5;
+    float fric = 0.1;
     float xvel = 0;
     float yvel = 0;
 
@@ -38,11 +38,11 @@ class Player {
     int nextLifeGain = 250; //The score needed to gain an extra life
 
 
-    Player(float x, float y, int currSprite, String soundfile, PApplet main) { //Constructor with default speeds of 1
+    Player(float x, float y, int currSprite, String soundfile, PApplet main) { //Constructor with default speeds of 3
         this.x = x;
         this.y = y;
-        xspeed = 1;
-        yspeed = 1;
+        xspeed = 4;
+        yspeed = 4;
         this.currSprite = currSprite;
         sprite = loadImage(spriteList[currSprite]);
         laserSound = new SoundFile(main, soundfile);
@@ -52,37 +52,24 @@ class Player {
         ypadding = sprite.height/2;
     }
 
-    Player(float x, float y, int hspeed, int vspeed, String file, String soundfile, PApplet main) { //Constructor with given speeds
-        this.x = x;
-        this.y = y;
-        xspeed = hspeed;
-        yspeed = vspeed;
-        sprite = loadImage(file);
-        laserSound = new SoundFile(main, soundfile);
-        xpadding = sprite.width/2;
-        ypadding = sprite.height/2;
-    }
-
     void changeVelocity() { //Changes Velocity based on which directions are toggles to be moved in
         if (up && !down) {
-            yvel -= yspeed*fric;
+            yvel -= yspeed;
         } else if (down && !up) {
-            yvel += yspeed*fric;
-        } else {
-            if (yvel!=0) {
+            yvel += yspeed;
+        }
+        if (yvel!=0) {
                 yvel -= yvel*fric ;
             }
-        }
 
         if (left && !right) {
-            xvel -= xspeed*fric;
+            xvel -= xspeed;
         } else if (right && !left) {
-            xvel += xspeed*fric;
-        } else {
-            if (xvel!=0) {
+            xvel += xspeed;
+        } 
+        if (xvel!=0) {
                 xvel -= xvel*fric;
             }
-        }
     }
 
     void checkPadding() { //Checks if the player is colliding with the padding and moves them into the desired area if outside
@@ -138,7 +125,7 @@ class Player {
     void addLife() { //Checks if the player has enough score to get an extra life
         if (score >= nextLifeGain) {
             life++;
-            nextLifeGain *= 1.75;
+            nextLifeGain *= 1.4;
             lifeGainSound.rate(2);
             if (!mute) {
                 lifeGainSound.play();
@@ -165,7 +152,7 @@ class Player {
 
     void shoot() { //Shoots if shooting condition is true
         if (shooting) {
-            if (frameCount - lastFrameShot > frameRate/3) {
+            if (frameCount - lastFrameShot > frameRate*3/8) {
                 laserSys.addLaser(x, y, 15, color(255, 0, 0));
                 lastFrameShot = frameCount;
                 laserSound.amp(0.25);

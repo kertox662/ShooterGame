@@ -1,6 +1,8 @@
+//Misha Melnyk
+//The scene responsible for drawing the title
 class Title {
 
-    PApplet main;
+    PApplet main;//Used for initializing sound
     SoundFile changeSound;
     SoundFile confirmSound;
 
@@ -11,15 +13,15 @@ class Title {
     }
 
 
-    int ytoTitle = 50;
-    int ygap = 30;
+    int ytoTitle = 50; //Distance of option 1 to title
+    int ygap = 30;//Distance between options
     int currOption = 0;
-    String[] options = {"Start Game", "Change Ship", "Mute " + mute, "Normal Difficulty"};
+    String[] options = {"Start Game", "Change Ship", "Mute " + mute, "Normal Difficulty"}; //Option text
     String title = "Shooter Game";
     int titley = 200;
 
 
-    void changeOption(String mode, int index, int change) {
+    void changeOption(String mode, int index, int change) { //Changes the currently selected option
         if (mode == "set") {
             currOption = index;
         } else if (mode == "add") {
@@ -35,11 +37,11 @@ class Title {
         }
     }
 
-    void displayText() {
+    void displayText() { //Displays option text, instructions, and high scores
         for (int i = 0; i<=options.length-1; i++) {
             textAlign(CENTER, CENTER);
 
-            if (i == currOption) {
+            if (i == currOption) { //The currently selected option will be gold
                 fill(250, 215, 0);
             } else {
                 fill(255);
@@ -52,40 +54,38 @@ class Title {
         textAlign(LEFT);
         text("WASD    Move", 10, height - 40);
         text("Space   Shoot or Select", 10, height - 20);
-        
-        text("Easy HighScore    " + hiScoreEasy,10, 20);
-        text("Normal HighScore  " + hiScoreNormal,10, 40);
-        text("Hard HighScore    " + hiScoreHard,10, 60);
+
+        text("Easy HighScore    " + hiScoreEasy, 10, 20);
+        text("Normal HighScore  " + hiScoreNormal, 10, 40);
+        text("Hard HighScore    " + hiScoreHard, 10, 60);
     }
 
-    void displayTitle() {
+    void displayTitle() { //Displays the title
         textAlign(CENTER, CENTER);
         fill(255, 0, 0);
         textSize(48);
         text(title, width/2, titley);
     }
 
-    void confirmClicked() {
+    void confirmClicked() { //The method that processes when space is clickes on the title screen
         String o = options[currOption];
-        if (!mute) {
-            confirmSound.play();
-        }
-        if (o == "Start Game") {
+        if (o == "Start Game") {//Starts the main game
             gameScene = "Main";
             if (!mute) {
-                music.loop();
+                music.play();
+                musicStartFrame = frameCount;
             }
-        } else if (o == "Change Ship") {
+        } else if (o == "Change Ship") {//Switches ship sprite
             p.changeSprite();
-        } else if (currOption == 2) {
+        } else if (currOption == 2) {//Toggles mute
             mute = !mute;
             options[2] = "Mute " + mute;
-        } else if (currOption == 3) {
+        } else if (currOption == 3) {//Sets difficulty
             eSys.difficulty += 0.25;
             if (eSys.difficulty > 1.25) {
                 eSys.difficulty = 0.75;
             }
-            if (eSys.difficulty < 1) {
+            if (eSys.difficulty < 1) {//Changes difficulty text(not an option itself)
                 options[3] = "Easy Difficulty";
             } else if (eSys.difficulty == 1) {
                 options[3] = "Normal Difficulty";
@@ -93,5 +93,8 @@ class Title {
                 options[3] = "Hard Difficulty";
             }
         }
+        if (!mute) {
+            confirmSound.play();
+        }
     }
-}
+}//Misha Melnyk

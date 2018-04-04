@@ -1,3 +1,5 @@
+//Misha Melnyk
+//Basic Class that moves, displays, and can check if it's offscreen
 class Laser {
 
     float x;
@@ -5,8 +7,8 @@ class Laser {
     int speed;
     color c;
 
-    int w = 3;
-    int h = 12;
+    int w = 5;
+    int h = 14;
 
     Laser(float x, float y, int speed, color c) {
         this.x = x;

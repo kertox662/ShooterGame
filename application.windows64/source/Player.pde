@@ -1,3 +1,5 @@
+//Misha Melnyk
+//The class that is responsible for the player's ship
 class Player {
 
     float x; //Coordinates
@@ -11,7 +13,7 @@ class Player {
 
     int xspeed; //Movement
     int yspeed;
-    float fric = 0.5;
+    float fric = 0.1;
     float xvel = 0;
     float yvel = 0;
 
@@ -19,7 +21,6 @@ class Player {
     PImage sprite;
     String[] spriteList = {"Images/ship.png", "Images/ship2.png", "Images/ship3.png"};
     int currSprite;
-
     SoundFile lifeGainSound;
     SoundFile shipHit;
 
@@ -28,20 +29,20 @@ class Player {
     float xpadding; //Padding so player doesn't leave screen
     float ypadding;
 
-    int life = 5;
+    int life = 5; //Life count and heart image
     PImage heart = loadImage("Images/PixelHeart.png");
 
-    int score;
-    int lastFrameHit = -60;
+    int score;//Score
+    int lastFrameHit = -60; //Last frame that the player was hit, allows for them to be hit and not immediately die due to higher framerate
 
-    int nextLifeGain = 250;
+    int nextLifeGain = 250; //The score needed to gain an extra life
 
 
     Player(float x, float y, int currSprite, String soundfile, PApplet main) { //Constructor with default speeds of 3
         this.x = x;
         this.y = y;
-        xspeed = 1;
-        yspeed = 1;
+        xspeed = 4;
+        yspeed = 4;
         this.currSprite = currSprite;
         sprite = loadImage(spriteList[currSprite]);
         laserSound = new SoundFile(main, soundfile);
@@ -51,37 +52,24 @@ class Player {
         ypadding = sprite.height/2;
     }
 
-    Player(float x, float y, int hspeed, int vspeed, String file, String soundfile, PApplet main) { //Constructor with given speeds
-        this.x = x;
-        this.y = y;
-        xspeed = hspeed;
-        yspeed = vspeed;
-        sprite = loadImage(file);
-        laserSound = new SoundFile(main, soundfile);
-        xpadding = sprite.width/2;
-        ypadding = sprite.height/2;
-    }
-
     void changeVelocity() { //Changes Velocity based on which directions are toggles to be moved in
         if (up && !down) {
-            yvel -= yspeed*fric;
+            yvel -= yspeed;
         } else if (down && !up) {
-            yvel += yspeed*fric;
-        } else {
-            if (yvel!=0) {
+            yvel += yspeed;
+        }
+        if (yvel!=0) {
                 yvel -= yvel*fric ;
             }
-        }
 
         if (left && !right) {
-            xvel -= xspeed*fric;
+            xvel -= xspeed;
         } else if (right && !left) {
-            xvel += xspeed*fric;
-        } else {
-            if (xvel!=0) {
+            xvel += xspeed;
+        } 
+        if (xvel!=0) {
                 xvel -= xvel*fric;
             }
-        }
     }
 
     void checkPadding() { //Checks if the player is colliding with the padding and moves them into the desired area if outside
@@ -125,7 +113,7 @@ class Player {
         image(sprite, x, y);
     }
 
-    void displayLife() {
+    void displayLife() { //Displays the life total in top left
         addLife();
         for (int i = 0; i<life; i++) {
             imageMode(CENTER);
@@ -134,10 +122,10 @@ class Player {
         }
     }
 
-    void addLife() {
+    void addLife() { //Checks if the player has enough score to get an extra life
         if (score >= nextLifeGain) {
             life++;
-            nextLifeGain *= 1.75;
+            nextLifeGain *= 1.4;
             lifeGainSound.rate(2);
             if (!mute) {
                 lifeGainSound.play();
@@ -164,7 +152,7 @@ class Player {
 
     void shoot() { //Shoots if shooting condition is true
         if (shooting) {
-            if (frameCount - lastFrameShot > frameRate/3) {
+            if (frameCount - lastFrameShot > frameRate*3/8) {
                 laserSys.addLaser(x, y, 15, color(255, 0, 0));
                 lastFrameShot = frameCount;
                 laserSound.amp(0.25);
@@ -176,12 +164,12 @@ class Player {
         }
     }
 
-    void changeSprite() {
+    void changeSprite() {//Changes the file used as the sprite for the player
         currSprite ++;
         sprite = loadImage(spriteList[currSprite%spriteList.length]);
     }
 
-    boolean isColliding(Enemy other) { //Checks if colliding with laser object
+    boolean isColliding(Enemy other) { //Checks if colliding with enemy object
 
         float distX = 0;
         float distY = 0;
@@ -206,7 +194,7 @@ class Player {
         return false;
     }
 
-    void checkCollisions(EnemySystem es) {
+    void checkCollisions(EnemySystem es) {//Checks collision for all enemy objects
         for (int i = es.eSysArray.size()-1; i >= 0; i--) {
             Enemy e = es.eSysArray.get(i);
             if (frameCount- lastFrameHit >= frameRate *1.5) {
@@ -220,7 +208,7 @@ class Player {
                 }
             }
         }
-        if (life <= 0) {
+        if (life <= 0) { //If no life, initializes game over screen
             GO.gameOverSound.rate(1.2);
             GO.gameOverSound.play();
             GO.start = frameCount;
@@ -230,7 +218,7 @@ class Player {
         }
     }
 
-    boolean isFlashing() {
+    boolean isFlashing() {//Determines if the display method should have the player flashing
         if (frameCount- lastFrameHit <= frameRate) {
             if ((frameCount - lastFrameHit)%20 < 10) {
                 return true;
@@ -239,7 +227,7 @@ class Player {
         return false;
     }
 
-    void run() {
+    void run() {//Runs main methods
         move();
         shoot();
         display();
@@ -247,3 +235,4 @@ class Player {
         displayLife();
     }
 }
+//Misha Melnyk

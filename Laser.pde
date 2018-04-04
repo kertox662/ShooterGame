@@ -7,8 +7,8 @@ class Laser {
     int speed;
     color c;
 
-    int w = 3;
-    int h = 12;
+    int w = 5;
+    int h = 14;
 
     Laser(float x, float y, int speed, color c) {
         this.x = x;

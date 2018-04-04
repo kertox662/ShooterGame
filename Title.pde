@@ -69,9 +69,6 @@ class Title {
 
     void confirmClicked() { //The method that processes when space is clickes on the title screen
         String o = options[currOption];
-        if (!mute) {
-            confirmSound.play();
-        }
         if (o == "Start Game") {//Starts the main game
             gameScene = "Main";
             if (!mute) {
@@ -95,6 +92,9 @@ class Title {
             } else {
                 options[3] = "Hard Difficulty";
             }
+        }
+        if (!mute) {
+            confirmSound.play();
         }
     }
 }//Misha Melnyk

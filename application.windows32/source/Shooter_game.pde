@@ -1,72 +1,80 @@
+//Author - Misha Melnyk
+//Name - Shooter Game
+//Purpose - Learn how to use Processing in a fun way
+//
+//Main file for the program
+
 import processing.sound.*;
 
-Player p;
-LaserSystem laserSys;
-EnemySystem eSys;
-SoundFile music;
-Title t;
-GameOver GO;
+Player p; //Player Object
 
+LaserSystem laserSys; //Systems for organizing Lasers and enemies that need large iterations of repeated actions
+EnemySystem eSys;
+
+SoundFile music;
+
+Title t; //Declare the objects for the scenes
+GameOver GO;
 BG back;
 
 PFont font;
 
-String gameScene = "Title";
+String gameScene = "Title"; //Initial conditions
 boolean mute = false;
 
-int hiScoreEasy;
+int hiScoreEasy; //High score system
 int hiScoreNormal;
 int hiScoreHard;
 
-            
+int musicStartFrame; //For reseting music
+
+
 
 
 void setup() {
     size(800, 800, P2D);
     frameRate(60);
-    
+
     p = new Player(width/2, height - 100, 0, "Sounds/zap.mp3", this);
-    
+
     laserSys = new LaserSystem();
     eSys = new EnemySystem();
-    
+
     music = new SoundFile(this, "Sounds/KomikuTheMomentofTruth.mp3");
-    
+
     t = new Title(this);
     GO = new GameOver("GAME OVER", 180, this);
-    
-    font = createFont("8-BIT-WONDER.ttf", 36);
+
+    font = createFont("8-BIT-WONDER.ttf", 36); //Initializes an 8-bit style font
     textFont(font);
     back = new BG();
-    
-    String [] hiScores = loadStrings("hiScores.txt");
+
+    String [] hiScores = loadStrings("hiScores.txt"); //Gets old high scores from a text file
     hiScoreEasy = int(hiScores[0]);
     hiScoreNormal = int(hiScores[1]);
     hiScoreHard = int(hiScores[2]);
-    
-    
 }
 
 void draw() {
-    back.run();
-    eSys.genQueue();
+    back.run(); //The background will always be generated
+    eSys.genQueue();//An array of numbers is generated to determine which enemy patterns to spawn
     if (gameScene == "Title") {
-        t.displayTitle();
+        t.displayTitle(); //Title scene is drawn
         t.displayText();
         p.display();
     } else if (gameScene == "Main") {
-        while (eSys.eSysArray.size() < 15) {
-            eSys.doEnemyRow(int(random(25)), this);
+        while (eSys.eSysArray.size() < 15) { //Keeps the amount of enemies a minimum of 15
+            eSys.doEnemyRow(int(random(26)), this);
         }
 
-        runGame();
+        runGame(); //Main processes in the game
     } else if (gameScene == "GameOver") {
-        GO.run();
+        GO.run(); //Runs game over screen
     }
 }
 
 
-void keyPressed() {
+void keyPressed() { //Key inputs
     if (key == 'a'||key == 'A') {
         if (gameScene == "Main") {
             p.setMove(3, true);
@@ -94,11 +102,9 @@ void keyPressed() {
             t.confirmClicked();
         }
     }
-
-    //println("Pressed: "+key);
 }
 
-void keyReleased() {
+void keyReleased() { //Key input on release
     if (key == 'a'||key == 'A') {
         p.setMove(3, false);
     } else if (key == 'w'|| key == 'W') {
@@ -110,11 +116,9 @@ void keyReleased() {
     } else if (keyCode == 32) {
         p.setShoot(false);
     }
-
-    //println("Released: "+key);
 }
 
-void displayScore() {
+void displayScore() { //Displays score in the bottom left
     String scoreMsg = "Score: " + p.score;
     textAlign(LEFT);
     textSize(16);
@@ -122,9 +126,10 @@ void displayScore() {
     text(scoreMsg, 5, height - 5);
 }
 
-void runGame() {
+void runGame() { //Main game runner
     laserSys.run();
     eSys.run();
     p.run();
     displayScore();
 }
+//Misha Melnyk
