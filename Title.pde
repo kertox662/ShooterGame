@@ -52,8 +52,9 @@ class Title {
         textSize(12);
         fill(255);
         textAlign(LEFT);
-        text("WASD    Move", 10, height - 40);
-        text("Space   Shoot or Select", 10, height - 20);
+        text("WASD    Move", 10, height - 60);
+        text("Space   Shoot or Select", 10, height - 40);
+        text("Escape  quit", 10, height - 20);
 
         text("Easy HighScore    " + hiScoreEasy, 10, 20);
         text("Normal HighScore  " + hiScoreNormal, 10, 40);

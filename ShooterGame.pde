@@ -32,10 +32,11 @@ int musicStartFrame; //For reseting music
 
 
 void setup() {
-    size(800, 800, P2D);
+    //size(800, 800);
+    fullScreen();
     frameRate(60);
 
-    p = new Player(width/2, height - 100, 0, "Sounds/zap.mp3", this);
+    p = new Player(width/2, height - 100, 0, "Sounds/zap.wav", this);
 
     laserSys = new LaserSystem();
     eSys = new EnemySystem();
@@ -75,6 +76,13 @@ void draw() {
 
 
 void keyPressed() { //Key inputs
+
+    if (key == CODED){
+        if(keyCode == ESC){
+            exit();
+        }
+    }
+
     if (key == 'a'||key == 'A') {
         if (gameScene == "Main") {
             p.setMove(3, true);

@@ -46,8 +46,8 @@ class Player {
         this.currSprite = currSprite;
         sprite = loadImage(spriteList[currSprite]);
         laserSound = new SoundFile(main, soundfile);
-        lifeGainSound = new SoundFile(main, "Sounds/LifeGain.flac");
-        shipHit = new SoundFile(main, "Sounds/shipHit.aiff");
+        lifeGainSound = new SoundFile(main, "Sounds/LifeGain.wav");
+        shipHit = new SoundFile(main, "Sounds/shipHit.wav");
         xpadding = sprite.width/2;
         ypadding = sprite.height/2;
     }
