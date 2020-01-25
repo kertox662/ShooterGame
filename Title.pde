@@ -74,8 +74,7 @@ class Title {
         if (o == "Start Game") {//Starts the main game
             gameScene = "Main";
             if (!mute) {
-                music.rewind();
-                music.play();
+                back.startMusic();
                 musicStartFrame = frameCount;
             }
         } else if (o == "Change Ship") {//Switches ship sprite

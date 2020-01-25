@@ -12,15 +12,8 @@ class BG {
     }
 
     void startMusic() { //Restarts music if finishes before player dies
-        //if (gameScene == "Main") {
-        //    if (frameCount - musicStartFrame > music.duration()*frameRate) {
-        //        if (!mute) {
-        //            music.play();
-        //            musicStartFrame = frameCount;
-        //        }
-        //    }
-        //}
         music.rewind();
+        music.setGain(-3);
         music.loop();
     }
 

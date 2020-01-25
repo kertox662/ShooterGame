@@ -217,6 +217,7 @@ class Player {
                     if (!mute) {
                         //shipHit.rate(1.4);
                         shipHit.rewind();
+                        shipHit.setGain(-12);
                         shipHit.play();
                     }
                     lastFrameHit = frameCount;
