@@ -23,14 +23,18 @@ class EnemySystem {
             if (e.life <= 0) {
                 p.score += e.scoreVal;
                 if (!mute) {
-                    e.enemyHit.amp(0.4);
+                    //e.enemyHit.amp(0.4);
+                    e.enemyHit.rewind();
+                    e.enemyHit.setGain(-10);
                     e.enemyHit.play();
                 }
                 eSysArray.remove(i);
+                continue;
             }
 
             if (e.isOffScreen()) {
                 eSysArray.remove(i);
+                continue;
             }
             e.checkCollisions(laserSys);
             e.move();

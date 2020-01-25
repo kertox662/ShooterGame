@@ -3,13 +3,13 @@
 class Title {
 
     PApplet main;//Used for initializing sound
-    SoundFile changeSound;
-    SoundFile confirmSound;
+    AudioPlayer changeSound;
+    AudioPlayer confirmSound;
 
     Title(PApplet main) {
         this.main = main;
-        changeSound = new SoundFile(main, "Sounds/changeSound.wav");
-        confirmSound = new SoundFile(main, "Sounds/confirmSound.wav");
+        changeSound = minim.loadFile("Sounds/changeSound.wav");
+        confirmSound = minim.loadFile("Sounds/confirmSound.wav");
     }
 
 
@@ -31,8 +31,9 @@ class Title {
                 currOption += change;
             }
         }
-        changeSound.rate(1.25);
+        //changeSound.rate(1.25);
         if (!mute) {
+            changeSound.rewind();
             changeSound.play();
         }
     }
@@ -73,6 +74,7 @@ class Title {
         if (o == "Start Game") {//Starts the main game
             gameScene = "Main";
             if (!mute) {
+                music.rewind();
                 music.play();
                 musicStartFrame = frameCount;
             }
@@ -95,6 +97,8 @@ class Title {
             }
         }
         if (!mute) {
+            confirmSound.rewind();
+            confirmSound.setGain(-15);
             confirmSound.play();
         }
     }

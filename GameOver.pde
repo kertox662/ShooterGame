@@ -6,12 +6,12 @@ class GameOver {
     int delay;//How long it will last
     String message;//What it will say
     int score; //The score it displays
-    SoundFile gameOverSound;
+    AudioPlayer gameOverSound;
 
     GameOver(String message, int delay, PApplet main) {
         this.message = message;
         this.delay = delay;
-        gameOverSound = new SoundFile(main, "Sounds/GameOver.wav");
+        gameOverSound = minim.loadFile("Sounds/GameOver.wav");
     }
 
     void displayText() { //Displays main message as well as score underneath

@@ -17,12 +17,12 @@ class Player {
     float xvel = 0;
     float yvel = 0;
 
-    SoundFile laserSound; //Sprite and Sound variables
+    AudioPlayer laserSound; //Sprite and Sound variables
     PImage sprite;
     String[] spriteList = {"Images/ship.png", "Images/ship2.png", "Images/ship3.png"};
     int currSprite;
-    SoundFile lifeGainSound;
-    SoundFile shipHit;
+    AudioPlayer lifeGainSound;
+    AudioPlayer shipHit;
 
     int lastFrameShot = 0; //Delay for shooting
 
@@ -41,32 +41,38 @@ class Player {
     Player(float x, float y, int currSprite, String soundfile, PApplet main) { //Constructor with default speeds of 3
         this.x = x;
         this.y = y;
-        xspeed = 4;
-        yspeed = 4;
+        //xspeed = 4;
+        //yspeed = 4;
+        xspeed = 50;
+        yspeed = 50;
         this.currSprite = currSprite;
         sprite = loadImage(spriteList[currSprite]);
-        laserSound = new SoundFile(main, soundfile);
-        lifeGainSound = new SoundFile(main, "Sounds/LifeGain.wav");
-        shipHit = new SoundFile(main, "Sounds/shipHit.wav");
+        laserSound = minim.loadFile(soundfile);
+        lifeGainSound = minim.loadFile("Sounds/LifeGain.wav");
+        shipHit = minim.loadFile("Sounds/shipHit.wav");
         xpadding = sprite.width/2;
         ypadding = sprite.height/2;
     }
 
     void changeVelocity() { //Changes Velocity based on which directions are toggles to be moved in
         if (up && !down) {
-            yvel -= yspeed;
+            yvel = -yspeed;
         } else if (down && !up) {
-            yvel += yspeed;
+            yvel = yspeed;
+        } else{
+            yvel = 0;
         }
         if (yvel!=0) {
-                yvel -= yvel*fric ;
-            }
+            yvel -= yvel*fric ;
+        }
 
         if (left && !right) {
-            xvel -= xspeed;
+            xvel = -xspeed;
         } else if (right && !left) {
-            xvel += xspeed;
-        } 
+            xvel = xspeed;
+        } else{
+            xvel = 0;
+        }
         if (xvel!=0) {
                 xvel -= xvel*fric;
             }
@@ -95,11 +101,16 @@ class Player {
     void move() { // Changes x and y based on velocity
         changeVelocity();
         checkPadding();
-        if (yvel != 0) {
-            y += yvel*fric;
-        }
-        if (xvel != 0) {
-            x += xvel*fric;
+        if(yvel != 0 && xvel != 0){
+            y += yvel * fric / SQRT2;
+            x += xvel * fric / SQRT2;
+        }else {
+            if (yvel != 0) {
+                y += yvel*fric;
+            }
+            if (xvel != 0) {
+                x += xvel*fric;
+            }
         }
     }
 
@@ -126,8 +137,10 @@ class Player {
         if (score >= nextLifeGain) {
             life++;
             nextLifeGain *= 1.4;
-            lifeGainSound.rate(2);
+            //lifeGainSound.rate(2);
             if (!mute) {
+                lifeGainSound.rewind();
+                lifeGainSound.setGain(-15);
                 lifeGainSound.play();
             }
         }
@@ -155,9 +168,10 @@ class Player {
             if (frameCount - lastFrameShot > frameRate*3/8) {
                 laserSys.addLaser(x, y, 15, color(255, 0, 0));
                 lastFrameShot = frameCount;
-                laserSound.amp(0.25);
-                laserSound.rate(1.5);
+                //laserSound.rate(1.5);
                 if (!mute) {
+                    laserSound.rewind();
+                    laserSound.setGain(-16);
                     laserSound.play();
                 }
             }
@@ -201,7 +215,8 @@ class Player {
                 if (isColliding(e)) {
                     life --;
                     if (!mute) {
-                        shipHit.rate(1.4);
+                        //shipHit.rate(1.4);
+                        shipHit.rewind();
                         shipHit.play();
                     }
                     lastFrameHit = frameCount;
@@ -209,12 +224,13 @@ class Player {
             }
         }
         if (life <= 0) { //If no life, initializes game over screen
-            GO.gameOverSound.rate(1.2);
+            //GO.gameOverSound.rate(1.2);
+            GO.gameOverSound.rewind();
             GO.gameOverSound.play();
             GO.start = frameCount;
             GO.score = score;
             gameScene = "GameOver";
-            music.stop();
+            music.pause();
         }
     }
 

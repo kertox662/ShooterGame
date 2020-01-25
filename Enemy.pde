@@ -27,7 +27,7 @@ class Enemy {
     int scoreVal;//How much score the enemy will give
 
     PApplet main; //Used to initiate sound files
-    SoundFile enemyHit; //Sound file
+    AudioPlayer enemyHit; //Sound file
 
     Enemy(float x, float y, float hspeed, float vspeed, String spriteFile, int xdirection, int life, int score, PApplet main) { //Constructor
         this.x = x;
@@ -40,7 +40,7 @@ class Enemy {
         initlife = life;
         scoreVal = score;
         this.main = main;
-        enemyHit = new SoundFile(main, "Sounds/EnemyKill.wav");
+        enemyHit = minim.loadFile("Sounds/EnemyKill.wav");
     }
 
 

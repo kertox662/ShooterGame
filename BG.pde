@@ -12,21 +12,22 @@ class BG {
     }
 
     void startMusic() { //Restarts music if finishes before player dies
-        if (gameScene == "Main") {
-            if (frameCount - musicStartFrame > music.duration()*frameRate) {
-                if (!mute) {
-                    music.play();
-                    musicStartFrame = frameCount;
-                }
-            }
-        }
+        //if (gameScene == "Main") {
+        //    if (frameCount - musicStartFrame > music.duration()*frameRate) {
+        //        if (!mute) {
+        //            music.play();
+        //            musicStartFrame = frameCount;
+        //        }
+        //    }
+        //}
+        music.rewind();
+        music.loop();
     }
 
     void run() { //Runs the main loop for the background
         if (random(1) < 0.2) {
             addStar();
         }
-        startMusic();
         background(0);
         for (int i = bgArray.size()-1; i >= 0; i--) { //Moves, displays and removes stars
             Star s = bgArray.get(i);

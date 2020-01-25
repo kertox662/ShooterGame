@@ -4,14 +4,21 @@
 //
 //Main file for the program
 
-import processing.sound.*;
+import ddf.minim.*;
+import ddf.minim.analysis.*;
+import ddf.minim.effects.*;
+import ddf.minim.signals.*;
+import ddf.minim.spi.*;
+import ddf.minim.ugens.*;
 
 Player p; //Player Object
 
 LaserSystem laserSys; //Systems for organizing Lasers and enemies that need large iterations of repeated actions
 EnemySystem eSys;
 
-SoundFile music;
+Minim minim;
+
+AudioPlayer music;
 
 Title t; //Declare the objects for the scenes
 GameOver GO;
@@ -28,20 +35,22 @@ int hiScoreHard;
 
 int musicStartFrame; //For reseting music
 
-
+final float SQRT2 = sqrt(2);
 
 
 void setup() {
     //size(800, 800);
     fullScreen();
     frameRate(60);
+    
+    minim = new Minim(this);
 
     p = new Player(width/2, height - 100, 0, "Sounds/zap.wav", this);
 
     laserSys = new LaserSystem();
     eSys = new EnemySystem();
 
-    music = new SoundFile(this, "Sounds/KomikuTheMomentofTruth.mp3");
+    music = minim.loadFile("Sounds/KomikuTheMomentofTruth.mp3");
 
     t = new Title(this);
     GO = new GameOver("GAME OVER", 180, this);
@@ -127,7 +136,7 @@ void keyReleased() { //Key input on release
 }
 
 void displayScore() { //Displays score in the bottom left
-    String scoreMsg = "Score: " + p.score;
+    String scoreMsg = "Score " + p.score;
     textAlign(LEFT);
     textSize(16);
     fill(255);
